@@ -3,16 +3,16 @@ const app=express();
 const connectDb=require("./config/database");
 const User=require("./model/user");
 
+
+app.use(express.json());
 app.post("/signup",async (req,res)=>{
-  const user=new User({
-    firstName:"snnsons",
-    lastName: "sahu",
-    age:23,
-    gender:"male",
-    email:"arsahu345@gmail.com"
-  });
+  const user=new User(req.body);
+  try{
   await user.save();
   res.send("data saved to database 333");
+  } catch(err){
+    res.status(400).send("Error saving the user"); 
+  }
 });
 
 connectDb()
