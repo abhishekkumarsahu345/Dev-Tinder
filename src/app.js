@@ -4,9 +4,10 @@ const connectDb=require("./config/database");
 const User=require("./model/user");
 const { validateSignUpData}=require("./utils/validator")
 const bcrypt= require('bcrypt');
-
+const cookieparser=require("cookie-parser");
 
 app.use(express.json());
+app.use(cookieparser());  
 app.get("/user", async (req,res)=>{
   const userEmail=req.body.email;
   try{
@@ -19,6 +20,34 @@ app.get("/user", async (req,res)=>{
     }
   } catch(err){
     res.status(404).send("someting wend wrong ");
+  }
+});
+app.post("/login", async (req,res)=>{
+  try{
+    const{email,password}=req.body;
+    const user =await User.findOne({email:email});
+    if(!user){
+      throw new Error(" some invalid credential");
+    }
+    const isPasswordValid=await bcrypt.compare(password,user.password);
+    // create JWT token 
+
+
+
+    // add token to cookie and send the token 
+
+
+
+    res.cookie("token","loremn@3434and this is the cookie tha you don't know but present ok dear don't worry ");
+
+    if(isPasswordValid){
+      res.send("Login successful");
+    }else {
+      throw new Error("invalid credentials ");
+    }
+
+  }catch(err){
+    res.status(404).send("error"+err.message);
   }
 });
 
@@ -67,6 +96,14 @@ app.post("/signup",async (req,res)=>{
   } catch(err){
     res.status(400).send("Error saving the user"); 
   }
+});
+
+app.get("/profile", async(req,res)=>{
+
+res.cookie("token","abc123");
+ const cookies = req.cookies;
+console.log(cookies);
+res.send("reading cookies");
 });
 
 connectDb()
