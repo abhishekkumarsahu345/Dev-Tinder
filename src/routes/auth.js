@@ -1,0 +1,60 @@
+const express=require("express");
+const User=require("./model/user");
+const bcrypt=require("bcrypt");
+const authRouter=express.Router();
+const User=require("../model/user");
+const { validateSignUpData}=require("./utils/validator");
+const cookieparser=require("cookie-parser");
+
+authRouter.post("/login", async (req,res)=>{
+  try{
+    const{email,password}=req.body;
+    const user =await User.findOne({email:email});
+    if(!user){
+      throw new Error(" some invalid credential");
+    }
+    const isPasswordValid=await user.validatepassword(password);
+    
+    
+    if(isPasswordValid){
+      const token=await user.getJWT();
+      res.cookie("token",token);
+   
+      res.send("Login successful");
+    }else {
+      throw new Error("invalid credentials ");
+    }
+
+  }catch(err){
+    res.status(404).send("error"+err.message);
+  }
+});
+
+
+authRouter.post("/signup",async (req,res)=>{
+  try{
+    //validation of data
+     validateSignUpData(req);
+    const {firstName,lastName,email,password}=req.body;
+    
+
+    //encrypt the password
+    const passwordHash= await bcrypt.hash(password,10);
+    
+    const user= new User({
+      firstName,
+      lastName,
+      email,
+      password:passwordHash,
+    });
+
+    
+  await user.save();
+  res.send("data saved to database 333");
+  } catch(err){
+    res.status(400).send("Error saving the user"); 
+  }
+});
+
+// what should be the export
+module.exports=authRouter;
