@@ -5,9 +5,13 @@ const User=require("./model/user");
 const { validateSignUpData}=require("./utils/validator")
 const bcrypt= require('bcrypt');
 const cookieparser=require("cookie-parser");
+const jwt=require("jsonwebtoken");
+const { error } = require('node:console');
 
 app.use(express.json());
 app.use(cookieparser());  
+
+
 app.get("/user", async (req,res)=>{
   const userEmail=req.body.email;
   try{
@@ -22,6 +26,8 @@ app.get("/user", async (req,res)=>{
     res.status(404).send("someting wend wrong ");
   }
 });
+
+
 app.post("/login", async (req,res)=>{
   try{
     const{email,password}=req.body;
@@ -31,14 +37,10 @@ app.post("/login", async (req,res)=>{
     }
     const isPasswordValid=await bcrypt.compare(password,user.password);
     // create JWT token 
-
-
-
+      const token=jwt.sign({_id:user._id},"devTinder@2001");
+   
     // add token to cookie and send the token 
-
-
-
-    res.cookie("token","loremn@3434and this is the cookie tha you don't know but present ok dear don't worry ");
+        res.cookie("token",token);
 
     if(isPasswordValid){
       res.send("Login successful");
@@ -99,19 +101,29 @@ app.post("/signup",async (req,res)=>{
 });
 
 app.get("/profile", async(req,res)=>{
+try {
+  const cookies = req.cookies;
+  const {token}=   cookies;
+  if(!token){
+    throw new error("invalid token");
+  }
+  const decodedmessage=await jwt.verify(token,"devTinder@2001");
+  const {_id}=decodedmessage;
+  const user=await User.findById(_id);
+  if(!user){
+    throw new error("user not found ");
+  }
+  res.send(user);
+  
 
-res.cookie("token","abc123");
- const cookies = req.cookies;
-console.log(cookies);
-res.send("reading cookies");
+} catch(err){
+  res.status(404).send("error"+err.message);
+};
 });
 
 connectDb()
   .then(()=>{
     console.log("database is coonnected");
-    app.listen(8000,()=>{
-        console.log("server is started");
-    });
   })
   .catch((err)=>{
     console.log("Database can't be connected");
