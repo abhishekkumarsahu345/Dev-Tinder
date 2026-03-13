@@ -1,18 +1,47 @@
 const express=require("express");
 const profileRouter=express.Router();
 const User =require("../model/user");
+const {validateEditProfileData }=require("../utils/validator");
 const {userAuth}=require("../middleware/auth");
  
-profileRouter.get("/profile",userAuth, async(req,res)=>{
+profileRouter.get("/profile/view",userAuth, async(req,res)=>{
 try {
   const user=req.user;// the user i got from the middlewware
   res.send(user);
-  
+ 
+
 
 } catch(err){
   res.status(404).send("error"+err.message);
 };
 });
+
+profileRouter.patch("/profile/edit", userAuth,async (req,res)=>{
+  try {
+  if(!validateEditProfileData(req)){
+    throw new Error("Invalid Edit Request");
+  }
+   const loggedUser=req.user;
+
+  Object.keys(req.body).forEach((key)=>{loggedUser[key]=req.body[key]});
+  console.log(loggedUser);
+  await loggedUser.save();  
+
+  // the below is normal way os saving data
+  // /* res.send(`${loggedUser.firstName}, your profile updated successfully` );
+
+  // actully like this send the resoponse in industry strands
+  res.json({
+    message: `${loggedUser.firstName}, your profile upated successfully`,
+    data: loggedUser,
+  });
+
+  }catch(err){
+    res.status(404).send(err.message);
+  }
+});
+
+ 
 profileRouter.get("/user", async (req,res)=>{
   const userEmail=req.body.email;
   try{
