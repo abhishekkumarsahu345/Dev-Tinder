@@ -1,9 +1,8 @@
 const express=require("express");
-const User=require("./model/user");
+const User=require("../model/user");
 const bcrypt=require("bcrypt");
 const authRouter=express.Router();
-const User=require("../model/user");
-const { validateSignUpData}=require("./utils/validator");
+const { validateSignUpData}=require("../utils/validator");
 const cookieparser=require("cookie-parser");
 
 authRouter.post("/login", async (req,res)=>{
@@ -13,7 +12,7 @@ authRouter.post("/login", async (req,res)=>{
     if(!user){
       throw new Error(" some invalid credential");
     }
-    const isPasswordValid=await user.validatepassword(password);
+    const isPasswordValid=await user.validatePassword(password);
     
     
     if(isPasswordValid){
@@ -54,6 +53,12 @@ authRouter.post("/signup",async (req,res)=>{
   } catch(err){
     res.status(400).send("Error saving the user"); 
   }
+});
+authRouter.post("/logout", async (req,res)=>{
+  res.cookie("token",null,{
+    expires: new Date(Date.now()),
+  });
+  res.send();
 });
 
 // what should be the export

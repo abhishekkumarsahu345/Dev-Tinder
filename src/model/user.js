@@ -1,4 +1,5 @@
 const mongoose=require('mongoose');
+const express=require("express");
 const { timeStamp } = require('node:console');
 const validator=require('validator');
 const jwt=require("jsonwebtoken");
@@ -7,7 +8,7 @@ const bcrypt=require("bcrypt");
 const userSchema=new mongoose.Schema({
     firstName:{
         type:String,
-        require:true,
+        required:true,
     },
  password:{
     type:String,
@@ -30,7 +31,7 @@ const userSchema=new mongoose.Schema({
     },
     email:{
         type:String,
-        require:true,
+        required:true,
         unique: true,
         lowercase:true,
         trim:true,
@@ -54,11 +55,11 @@ const userSchema=new mongoose.Schema({
 
 userSchema.methods.getJWT= async function () { // don't use arrow (=> ) here due to this will not work   
     const user=this;  // refer to the current user who is  running it
-    const token= await jwt.sing({_id:user._id},"devTinder@2001", {expiresIn:"7d",});
+    const token= await jwt.sign({_id:user._id},"devTinder@2001", {expiresIn:"7d",});
     return token;
 };
 
-userSchema.methods.validatePassword= async function (passwordInptByUser) {
+userSchema.methods.validatePassword= async function (passwordInputByUser) {
     const user= this;
     const isPasswordValid= await bcrypt.compare ( passwordInputByUser, user.password);
     return isPasswordValid;

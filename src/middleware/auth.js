@@ -9,7 +9,7 @@ const userAuth= async (req,res,next)=>{
             throw new Error("token not found");
         }
         //validatae token
-        const decodeObh=await jwt.verify(token,"devTinder@2001");
+        const decodeObj=await jwt.verify(token,"devTinder@2001");
         //finduser
         const{_id}=decodeObj;
         const user=await User.findById(_id);
