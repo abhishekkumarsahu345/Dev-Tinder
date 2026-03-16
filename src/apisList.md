@@ -15,6 +15,8 @@ PATCH /profile/password   // Forgot password API
 ## connectionRequestRouter
 POST /request/send/interested/:userId  
 POST /request/send/ignored/:userId  
+
+for upper 2 i can create dynamic route that is => POST /request/send/:status/:touserId  
 POST /request/review/accepted/:requestId  
 POST /request/review/rejected/:requestId  
 

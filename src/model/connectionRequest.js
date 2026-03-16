@@ -20,7 +20,7 @@ const mongoose=  require("mongoose");
  }, {timestamps:true}
  );
   
- // after schema create a model
+ // after schema create a model model Start capiatl always
  const ConnectionRequestModel= new mongoose.model("ConnectionRequest",connectionRequestSchema);
   
 // now export the modell
