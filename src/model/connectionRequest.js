@@ -14,7 +14,7 @@ const mongoose=  require("mongoose");
         required:true, 
         enum:{
             values:["ignored","interested", "accepted","rejected"],
-            message:`{VALUE} is incorrecte status type`,
+            message:`{VALUE} is inco  rrecte status type`,
         },
     },
  }, {timestamps:true}
