@@ -26,7 +26,7 @@ const userSchema=new mongoose.Schema({
         enum: {
             values:["male", "female","other"],
             message:`{VALUE}is not a valid gender`,
-        },
+        }, 
         
     },
     email:{

@@ -19,7 +19,15 @@ const mongoose=  require("mongoose");
     },
  }, {timestamps:true}
  );
-  
+// check if from and to user id both are same a person can't sent connection to himself
+connectionRequestSchema.pre("save",function(next) {
+    const connectionRequest= this;
+    if(connectionRequest.fromUserId.equals(connectionRequest.toUserId)){
+        throw new Error("can't send connecton request ot yourself");
+    }
+    next();
+
+});
  // after schema create a model model Start capiatl always
  const ConnectionRequestModel= new mongoose.model("ConnectionRequest",connectionRequestSchema);
   
