@@ -17,13 +17,12 @@ POST /request/send/interested/:userId
 POST /request/send/ignored/:userId  
 
 for upper 2 i can create dynamic route that is => POST /request/send/:status/:touserId  
-POST /request/review/accepted/:requestId  
-POST /request/review/rejected/:requestId  
+POST /request/review/:status/:requestId  
 
 
 ## userRouter
-GET /user/connections  
-GET /user/requests  
+GET /user/requests/received
+GET /user/requests/connections  
 GET /user/feed - Gets you the profiles of other users on platform  
 
 
