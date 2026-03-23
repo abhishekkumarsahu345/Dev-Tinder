@@ -12,7 +12,7 @@ const status= req.params.status;
 const  allowedStatus=["ignored","interested"]; // this show only allowed stauses
  
 if(!allowedStatus.includes(status)){
-    return res.status(400).json({message:"invalid ststus type" + status});
+    return res.status(400).json({message:"invalid ststus type " + status});
 }
 
 // check the user is exist or not exist in your database or not 
@@ -39,12 +39,46 @@ const connectionRequest= new ConnectionRequest({
 const data= await connectionRequest.save();
 res.json({
     message:"connection Request Sent Successfully",
-    data,
+    data, 
 }); 
 }catch(err){
-    res.status(400).send("Error",+err.message);
+    res.status(400).json({
+        message:"Error r " +err.message
+    });
 }
 
 }); 
+
+
+
+
+// for the person to accept or reject the request come from user
+requestRouter.post("/request/review/:status/:requestId",userAuth,async(req,res)=>{ 
+try{
+    const loggedInUser=req.user;
+     const{ status,requestId}=req.params;
+    const allowedStatus=["accepted","rejected"];
+    if(!allowedStatus.includes(status)){
+        return res.status(404).json({message: "status not allowed"});
+
+    }
+
+    const connectionRequest=await ConnectionRequest.findOne({
+       fromUserId :requestId,
+       toUserId:loggedInUser._id,
+       status:"interested", 
+    });
+    if(!connectionRequest){
+        return res.status(404).json({ message:"Connection request not found"});
+    }
+    connectionRequest.status=status;
+    const data= await connectionRequest.save();
+    res.json({message:"Connection request"+status,data});
+}catch(err){
+    res.status(400).send("some thing wrong in... this api ");
+}
+
+
+});
 
 module.exports=requestRouter;
