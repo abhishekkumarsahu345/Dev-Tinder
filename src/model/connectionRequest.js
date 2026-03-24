@@ -3,6 +3,7 @@ const mongoose=  require("mongoose");
  {
     fromUserId: {
         type: mongoose.Schema.Types.ObjectId, // as the _id in mongose is a object id not a string so 
+        ref: "user",// ref to the user collection
         required:true,
     },
     toUserId: {
