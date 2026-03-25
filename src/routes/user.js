@@ -3,6 +3,7 @@ const userRouter=express.Router();
 const {userAuth}=require("../middleware/auth");
 const ConnectionRequest=require("../model/connectionRequest");
 const USER_SAFE_DATA ="firstName lastName photoUrl age gender" ;
+const User=require("../model/user");
 userRouter.get("/user/requests/received",userAuth,async (req,res)=>{
     try{
         const loggedInUser=req.user;
@@ -53,5 +54,34 @@ try {
 
 
 
+});
+
+userRouter.get("/feed",userAuth,async(req,res)=>{
+try{
+    const loggedInUser=req.user;
+
+    // see logic that in feed you will not see your card,already accepted or rejected or connected cards ok
+    const connectionRequests=await ConnectionRequest.find({
+        $or: [ {fromUserId:loggedInUser._id},{toUserId:loggedInUser._id}],
+    }).select("fromUserId toUserId");
+    const hideUsersFromFeed=new Set();
+    connectionRequests.forEach((req)=>{
+
+     hideUsersFromFeed.add(req.fromUserId.toString());
+     hideUsersFromFeed.add(req.toUserId.toString());
+
+
+    });
+    const users=await User.find({
+        $and: [
+            {_id:{$nin:Array.from(hideUsersFromFeed)}},
+            {_id:{$ne:loggedInUser._id}},
+        ],
+
+    }).select(USER_SAFE_DATA);
+    res.send(users);
+}catch(err){
+    res.status(404).json({message:err.message});
+}
 });
 module.exports=userRouter;
