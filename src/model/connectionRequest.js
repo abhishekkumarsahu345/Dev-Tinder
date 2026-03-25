@@ -8,6 +8,7 @@ const mongoose=  require("mongoose");
     },
     toUserId: {
         type:mongoose.Schema.Types.ObjectId,
+        ref:"user",// give  a ref ok
         required:true,
     },
     status:{
