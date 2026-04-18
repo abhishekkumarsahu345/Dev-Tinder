@@ -59,7 +59,11 @@ try {
 userRouter.get("/feed",userAuth,async(req,res)=>{
 try{
     const loggedInUser=req.user;
-
+    
+    const page= parseInt(req.query.page)|| 1;
+    let limit=parseInt(req.query.limit)||10;
+    limit =limit>50? 50:limit;
+    const skip=(page-1)*limit;
     // see logic that in feed you will not see your card,already accepted or rejected or connected cards ok
     const connectionRequests=await ConnectionRequest.find({
         $or: [ {fromUserId:loggedInUser._id},{toUserId:loggedInUser._id}],
@@ -78,8 +82,11 @@ try{
             {_id:{$ne:loggedInUser._id}},
         ],
 
-    }).select(USER_SAFE_DATA);
-    res.send(users);
+    }).select(USER_SAFE_DATA)
+      .skip(skip)
+      .limit(limit);
+
+    res.json({data:users});
 }catch(err){
     res.status(404).json({message:err.message});
 }

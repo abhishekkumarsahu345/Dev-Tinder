@@ -5,6 +5,7 @@ const authRouter=express.Router();
 const { validateSignUpData}=require("../utils/validator");
 const cookieparser=require("cookie-parser");
 
+
 authRouter.post("/login", async (req,res)=>{
   try{
     const{email,password}=req.body;
@@ -19,7 +20,7 @@ authRouter.post("/login", async (req,res)=>{
       const token=await user.getJWT();
       res.cookie("token",token);
    
-      res.send("Login successful");
+      res.send(user);
     }else {
       throw new Error("invalid credentials ");
     }
