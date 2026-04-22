@@ -3,9 +3,7 @@ const app=express();
 const connectDb=require("./config/database");
 
 const cookieparser=require("cookie-parser");
-const bcrypt= require('bcrypt');
 
-const jwt=require("jsonwebtoken");
 
 app.use(express.json());
 app.use(cookieparser());  

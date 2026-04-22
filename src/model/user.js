@@ -1,7 +1,4 @@
 const mongoose=require('mongoose');
-const express=require("express");
-const { timeStamp } = require('node:console');
-const validator=require('validator');
 const jwt=require("jsonwebtoken");
 const bcrypt=require("bcrypt");
  
