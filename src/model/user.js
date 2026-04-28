@@ -33,9 +33,7 @@ const userSchema=new mongoose.Schema({
         lowercase:true,
         trim:true,
     },
-    photoUrl:{
-        type: String
-    },
+   
     about:{
         type:String,
          default:"this is default about data",

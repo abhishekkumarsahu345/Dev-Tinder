@@ -8,6 +8,7 @@ const cookieparser=require("cookie-parser");
 app.use(express.json());
 app.use(cookieparser());  
 
+//modular route Instance and attached them using app.use
 const authRouter=require("./routes/auth");
 const profileRouter=require("./routes/profile");
 const requestRouter=require("./routes/request");  
